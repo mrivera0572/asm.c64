@@ -1,0 +1,4 @@
+.label int=$849
+.label exit=$866
+.label xscroll=$86f
+.label continue=$863

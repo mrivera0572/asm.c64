@@ -1,0 +1,4 @@
+.label sinus=$106a
+.label loop=$1016
+.label sprite=$102e
+.label noinc=$102b
