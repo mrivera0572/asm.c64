@@ -39,6 +39,16 @@
  	
  	cli // Enable interrupts again
  	
+ 	ldx #00
+ 	lda #32
+ clear_screen:
+ 	sta $0400, x
+ 	sta $0500, x
+ 	sta $0600, x
+ 	sta $0700, x
+ 	inx
+ 	bne clear_screen
+ 	
  mainloop: 
  	jmp mainloop
  
@@ -49,18 +59,50 @@
  	and $f8 // mask out old horizontal scroll bits
  	ora xscroll // mask in new horizontal scroll bits
  	sta $d016 // store it
-	lda xscroll // where are we?
 
-	cmp #$00 // are we done scrolling for this time?
-	bne continue // if not, continue scrolling 1 more pixel
+	dec xscroll
+	cmp #$00
+	bne exit // it hasn't rolled over (we are still scrolling)
+
+	// xscroll has rolled over, reset it to 7 and load next char
+	lda #$7
+	sta xscroll
+	
+	
+//	lda xscroll // where are we?
+
+//	cmp #$00 // are we done scrolling for this time?
+//	bne continue // if not, continue scrolling 1 more pixel
 	
 	// TODO: Move characters 
-	lda #7
-	sta xscroll
-	jmp exit
 
-continue:	
-	dec xscroll
+	// line starts at $07C0
+	// line ends at $07E6
+    // new letter arrives at $07E7
+loadtext:    
+    ldx letter
+	lda scrolltext, x
+	bne continue
+	sta letter
+	tax
+	lda scrolltext, x
+	
+continue:
+    sta $07e7
+    inc letter
+    
+    ldx #$c0
+    ldy #$c1
+    
+movetext:
+	lda $0700, y
+	sta $0700, x
+	inx
+	iny
+	tya
+	cmp #$e8
+	bne movetext
+
 
  	
 	exit: 
@@ -74,6 +116,11 @@ continue:
 
 // ----- @Data@ -----
 xscroll: .byte $7
+letter: .word 0
+
+scrolltext:
+	.import text "scroll.txt"
+	.byte $00
 
 // ----- @Scripts@ -----
 .var brkFile = createFile("breakpoints.txt") 

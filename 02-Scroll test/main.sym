@@ -1,5 +1,10 @@
-.label xscroll=$86f
-.label continue=$863
-.label mainloop=$846
-.label interrupt=$849
-.label exit=$866
+.label loadtext=$873
+.label xscroll=$8a2
+.label continue=$882
+.label mainloop=$859
+.label interrupt=$85c
+.label movetext=$88c
+.label clear_screen=$84a
+.label exit=$899
+.label letter=$8a3
+.label scrolltext=$8a5

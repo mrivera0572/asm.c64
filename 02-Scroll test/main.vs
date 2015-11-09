@@ -1,6 +1,11 @@
-al C:86f .xscroll
-al C:863 .continue
-al C:846 .mainloop
-al C:849 .interrupt
-al C:866 .exit
+al C:873 .loadtext
+al C:8a2 .xscroll
+al C:882 .continue
+al C:859 .mainloop
+al C:85c .interrupt
+al C:88c .movetext
+al C:84a .clear_screen
+al C:899 .exit
+al C:8a3 .letter
+al C:8a5 .scrolltext
 al C:80b .upstartEnd
