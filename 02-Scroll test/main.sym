@@ -1,4 +1,5 @@
-.label int=$849
-.label exit=$866
 .label xscroll=$86f
 .label continue=$863
+.label mainloop=$846
+.label interrupt=$849
+.label exit=$866

@@ -1,9 +1,11 @@
-.var brkFile = createFile("breakpoints.txt") 
-.eval brkFile.writeln("ll \"main.vs\"")
+/* 
+  02-Scroll test
+  
+  A small test program to test screen/text scrolling on the C64.
+  
+  pepzi 2015-11-09 
+*/
 
-.macro break() {
-	.eval brkFile.writeln("break " + toHexString(*))
-}
 
 .pc = $801 "Basic loader"
 :BasicUpstart(2064)
@@ -24,8 +26,8 @@
  	stx $d016 // Single color
  	sty $d018 // Screen at $0400, charset at $2000
  	
- 	lda #<int
- 	ldx #>int
+ 	lda #<interrupt
+ 	ldx #>interrupt
  	ldy #$20
  	sta $0314 // Set interrupts vector
  	stx $0315 // Set interrupts vector
@@ -40,15 +42,15 @@
  mainloop: 
  	jmp mainloop
  
+// ----- @Interrupt routine@ -----
  interrupt:
  	// TODO: Clean this mess up
-
  	lda $d016 // read screen control register 2
  	and $f8 // mask out old horizontal scroll bits
  	ora xscroll // mask in new horizontal scroll bits
  	sta $d016 // store it
 	lda xscroll // where are we?
-:break()
+
 	cmp #$00 // are we done scrolling for this time?
 	bne continue // if not, continue scrolling 1 more pixel
 	
@@ -70,4 +72,13 @@ continue:
  	pla
  	rti
 
+// ----- @Data@ -----
 xscroll: .byte $7
+
+// ----- @Scripts@ -----
+.var brkFile = createFile("breakpoints.txt") 
+.eval brkFile.writeln("ll \"main.vs\"")
+
+.macro break() {
+	.eval brkFile.writeln("break " + toHexString(*))
+}
