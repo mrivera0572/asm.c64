@@ -12,13 +12,15 @@
 
 .pc = $0810 "Program" 
 
- 	sei // Disable interrupts
+// ----- @set up interrupts@ -----
+ 	sei
  	lda #$7f
  	ldx #$01
- 	sta $dc0d // Disable CIA 1 interrupts
- 	sta $dd0d // Disable CIA 2 interrupts
- 	stx $d01a // Enable raster interrupts
+ 	sta $dc0d
+ 	sta $dd0d
+ 	stx $d01a
  	
+// ----- @set up screen mode@ -----
  	lda #$1b
  	ldx #$c8
  	ldy #$14
@@ -26,6 +28,7 @@
  	stx $d016 // Single color
  	sty $d018 // Screen at $0400, charset at $2000
  	
+// ----- @configure raster interrupt@ -----
  	lda #<interrupt
  	ldx #>interrupt
  	ldy #$20
@@ -37,7 +40,7 @@
  	lda $dd0d // ACK CIA 2 interrupts
  	asl $d019 // ACK VIC interrupts
  	
- 	cli // Enable interrupts again
+ 	cli
  	
  	ldx #00
  	lda #32
@@ -52,29 +55,15 @@
  mainloop: 
  	jmp mainloop
  
-// ----- @Interrupt routine@ -----
+// ----- @interrupt routine@ -----
  interrupt:
- 	// TODO: Clean this mess up
- 	lda $d016 // read screen control register 2
- 	and $f8 // mask out old horizontal scroll bits
- 	ora xscroll // mask in new horizontal scroll bits
- 	sta $d016 // store it
-
-	dec xscroll
+	lda xscroll
 	cmp #$00
-	bne exit // it hasn't rolled over (we are still scrolling)
+	bne scroll // it hasn't rolled over (we are still scrolling)
 
-	// xscroll has rolled over, reset it to 7 and load next char
-	lda #$7
+// ----- @reset scroll@ -----
+	lda #$8
 	sta xscroll
-	
-	
-//	lda xscroll // where are we?
-
-//	cmp #$00 // are we done scrolling for this time?
-//	bne continue // if not, continue scrolling 1 more pixel
-	
-	// TODO: Move characters 
 
 	// line starts at $07C0
 	// line ends at $07E6
@@ -103,9 +92,15 @@ movetext:
 	cmp #$e8
 	bne movetext
 
-
- 	
-	exit: 
+scroll: 
+	dec xscroll
+	lda $d016 	// read screen control register 2
+ 	and $f8		// mask out old horizontal scroll bits
+ 	clc
+ 	adc xscroll // mask in new horizontal scroll bits
+ 	sta $d016 	// store it
+	 	
+exit: 
  	asl $d019
  	pla
  	tay
