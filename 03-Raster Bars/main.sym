@@ -1,0 +1,10 @@
+.label wait=$8e5
+.label color=$8ec
+.label int2=$86c
+.label int1=$849
+.label int4=$8ae
+.label int3=$88d
+.label loop=$846
+.label loadcolor=$8ce
+.label resetcolor=$8dc
+.label cid=$8eb

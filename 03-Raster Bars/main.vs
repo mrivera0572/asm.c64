@@ -1,0 +1,11 @@
+al C:8e5 .wait
+al C:8ec .color
+al C:86c .int2
+al C:849 .int1
+al C:8ae .int4
+al C:88d .int3
+al C:846 .loop
+al C:8ce .loadcolor
+al C:8dc .resetcolor
+al C:8eb .cid
+al C:80b .upstartEnd
